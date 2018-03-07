@@ -60,15 +60,39 @@ const mapParams = (req) => {
     return paramMaps;
 }
 
-const FilterParse = (filterParsed) => {
+const createRegexp = (str) => {
+    if (str.charAt(0) === '/' &&
+        str.charAt(str.length - 1) === '/') {
+        var text = str.substr(1, str.length - 2).replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+        return new RegExp(text, 'i');
+    } else {
+        return str;
+    }
+}
+
+const resolveArray = (arr) => {
+    const self = this;
+    for (var x = 0; x < arr.length; x++) {
+        if (typeof arr[x] === 'object') {
+            arr[x] = self.filterParse(arr[x]);
+        } else if (Array.isArray(arr[x])) {
+            arr[x] = self.resolveArray(arr[x]);
+        } else if (typeof arr[x] === 'string') {
+            arr[x] = self.createRegexp(arr[x]);
+        }
+    }
+    return arr;
+}
+
+const filterParse = (filterParsed) => {
     var self = this;
     for (var key in filterParsed) {
-        if (self.IsString(filterParsed[key])) {
-            filterParsed[key] = self.CreateRegexp(filterParsed[key]);
-        } else if (self.IsArray(filterParsed[key])) {
-            filterParsed[key] = self.ResolveArray(filterParsed[key]);
-        } else if (self.IsObject(filterParsed[key])) {
-            filterParsed[key] = self.FilterParse(filterParsed[key]);
+        if (typeof filterParsed[key] === 'string') {
+            filterParsed[key] = createRegexp(filterParsed[key]);
+        } else if (Array.isArray(filterParsed[key])) {
+            filterParsed[key] = self.resolveArray(filterParsed[key]);
+        } else if (typeof filterParsed[key] === 'object') {
+            filterParsed[key] = self.filterParse(filterParsed[key]);
         }
     }
     return filterParsed;
