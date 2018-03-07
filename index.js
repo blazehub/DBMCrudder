@@ -152,9 +152,8 @@ const index = (req, res, sendResponse) => {
     if (typeof filter === 'string') {
         try {
             filter = JSON.parse(filter);
-            filter = FilterParse(filter);
+            filter = filterParse(filter);
         } catch (err) {
-            this.logger.error('Failed to parse filter :' + err);
             filter = {};
         }
     }
