@@ -1,6 +1,6 @@
 {
   "name": "restified-mongo-crud",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "restified api to implement mongo crud operations",
   "main": "index.js",
   "scripts": {
