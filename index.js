@@ -279,5 +279,7 @@ module.exports = {
     index: index,
     show: show,
     create: create,
-    update: update
+    update: update,
+    Okay: Okay,
+    Error: Error
 }
