@@ -231,7 +231,7 @@ const create = (req, res, sendResponse) => {
             }
         });
     if (!sendResponse) {
-        return promise;
+        return entryPromise;
     }
 };
 
