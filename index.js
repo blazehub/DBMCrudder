@@ -298,6 +298,6 @@ module.exports = {
     show: show,
     create: create,
     update: update,
-    Okay: self.Okay,
-    Error: self.Error
+    Okay: Okay,
+    Error: _Error
 }
