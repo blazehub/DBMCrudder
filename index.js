@@ -10,7 +10,7 @@ const init = (schema, modelName, options) => {
     self.create = create;
     self.update = update;
     self.Okay = Okay;
-    self.Error = Error;
+    self.Error = _Error;
     self.NotFound = NotFound;
     console.log('Mongoose initialised...');
     return self;
@@ -106,7 +106,7 @@ const NotFound = (res) => {
     res.status(404).send();
 }
 
-const Error = (res, err) => {
+const _Error = (res, err) => {
     if (err.errors) {
         var errors = [];
         Object.keys(err.errors).forEach(el => errors.push(err.errors[el].message));
@@ -171,11 +171,15 @@ const index = (req, res, sendResponse) => {
         .then((result) => {
             if (sendResponse) {
                 Okay(res, result);
+            } else {
+                return result;
             }
         })
         .catch((err) => {
             if (sendResponse) {
-                Error(res, err);
+                self.Error(res, err);
+            } else {
+                return new Error(err);
             }
         });
     if (!sendResponse) {
@@ -203,10 +207,16 @@ const show = (req, res, sendResponse) => {
                 if (!result)
                     NotFound(res);
                 Okay(res, result);
+            } else {
+                return result;
             }
         })
         .catch((err) => {
-            Error(res, err);
+            if (sendResponse) {
+                self.Error(res, err);
+            } else {
+                return new Error(err);
+            }
         });
 
     if (!sendResponse) {
@@ -223,11 +233,15 @@ const create = (req, res, sendResponse) => {
         .then((_created) => {
             if (sendResponse) {
                 Okay(res, _created);
+            } else {
+                return _created;
             }
         })
         .catch((err) => {
             if (sendResponse) {
-                Error(res, err);
+                self.Error(res, err);
+            } else {
+                return new Error(err);
             }
         });
     if (!sendResponse) {
@@ -262,11 +276,15 @@ const update = (req, res, sendResponse) => {
         .then((_updated) => {
             if (sendResponse) {
                 Okay(res, _updated);
+            } else {
+                return _updated;
             }
         })
         .catch((err) => {
             if (sendResponse) {
-                Error(res, err);
+                self.Error(res, err);
+            } else {
+                return new Error(err);
             }
         });
     if (!sendResponse) {
@@ -280,6 +298,6 @@ module.exports = {
     show: show,
     create: create,
     update: update,
-    Okay: Okay,
-    Error: Error
+    Okay: self.Okay,
+    Error: self.Error
 }
